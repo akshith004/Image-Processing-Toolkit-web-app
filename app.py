@@ -7,10 +7,21 @@ from PIL import Image
 # Helper Functions
 # ---------------------------
 def load_image(uploaded_file):
-    image = Image.open(uploaded_file)
-    return np.array(image)
+    """
+    Safely load an uploaded image for Streamlit and OpenCV.
+    Returns an RGB NumPy array.
+    """
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    image_bgr = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    if image_bgr is None:
+        raise ValueError("Could not read image. Upload a valid JPG/PNG/BMP file.")
+    image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+    return image_rgb
 
 def save_image(image, filename="processed_image.png"):
+    """
+    Save an RGB image array using OpenCV.
+    """
     cv2.imwrite(filename, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
     return filename
 
@@ -28,21 +39,31 @@ def get_image_info(image, uploaded_file):
 # Streamlit GUI Layout
 # ---------------------------
 st.set_page_config(page_title="VisionLab Toolkit", layout="wide")
-st.markdown("<h1 style='text-align:center; color:#4CAF50;'>✨ VisionLab: Interactive Image Processing Toolkit ✨</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='text-align:center; color:#4CAF50;'>✨ VisionLab: Interactive Image Processing Toolkit ✨</h1>",
+    unsafe_allow_html=True
+)
 
+# ---------------------------
 # File Upload Section
-uploaded_file = st.file_uploader("📂 Upload an Image", type=["jpg", "jpeg", "png", "bmp"], label_visibility="collapsed")
+# ---------------------------
+uploaded_file = st.file_uploader(
+    "📂 Upload an Image",
+    type=["jpg", "jpeg", "png", "bmp"],
+    label_visibility="collapsed"
+)
 
 if uploaded_file:
     image = load_image(uploaded_file)
+    processed_image = image.copy()
 
+    # ---------------------------
     # Tabs for Categories
+    # ---------------------------
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "ℹ️ Info", "🎨 Colors", "🔄 Transforms", "🧹 Filtering", 
+        "ℹ️ Info", "🎨 Colors", "🔄 Transforms", "🧹 Filtering",
         "⚡ Enhancement", "✂️ Edges", "💾 Compression"
     ])
-
-    processed_image = image.copy()
 
     # ---- Info Tab ----
     with tab1:
@@ -106,11 +127,11 @@ if uploaded_file:
             st.image(processed_image, caption="Mean Blur", use_container_width=True)
         elif choice == "Sobel":
             processed_image = cv2.Sobel(image, cv2.CV_64F, 1, 1, ksize=5)
-            processed_image = cv2.convertScaleAbs(processed_image)  # ✅ Fix
+            processed_image = cv2.convertScaleAbs(processed_image)
             st.image(processed_image, caption="Sobel Filter", use_container_width=True)
         elif choice == "Laplacian":
             processed_image = cv2.Laplacian(image, cv2.CV_64F)
-            processed_image = cv2.convertScaleAbs(processed_image)  # ✅ Fix
+            processed_image = cv2.convertScaleAbs(processed_image)
             st.image(processed_image, caption="Laplacian Filter", use_container_width=True)
 
     # ---- Enhancement ----
@@ -135,11 +156,11 @@ if uploaded_file:
             st.image(processed_image, caption="Canny Edges", channels="GRAY", use_container_width=True)
         elif choice == "Sobel":
             processed_image = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=5)
-            processed_image = cv2.convertScaleAbs(processed_image)  # ✅ Fix
+            processed_image = cv2.convertScaleAbs(processed_image)
             st.image(processed_image, caption="Sobel Edge", use_container_width=True)
         elif choice == "Laplacian":
             processed_image = cv2.Laplacian(image, cv2.CV_64F)
-            processed_image = cv2.convertScaleAbs(processed_image)  # ✅ Fix
+            processed_image = cv2.convertScaleAbs(processed_image)
             st.image(processed_image, caption="Laplacian Edge", use_container_width=True)
 
     # ---- Compression ----
