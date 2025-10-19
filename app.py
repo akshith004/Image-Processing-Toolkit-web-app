@@ -68,7 +68,7 @@ if uploaded_file:
     # ---- Info Tab ----
     with tab1:
         st.subheader("Image Information")
-        st.image(image, caption="Original Image", use_container_width=True)
+        st.image(image, caption="Original Image", use_column_width=True)
         st.json(get_image_info(image, uploaded_file))
 
     # ---- Color Conversion ----
@@ -78,16 +78,16 @@ if uploaded_file:
         ])
         if choice == "RGB → Grayscale":
             processed_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-            st.image(processed_image, caption="Grayscale", channels="GRAY", use_container_width=True)
+            st.image(processed_image, caption="Grayscale", channels="GRAY", use_column_width=True)
         elif choice == "RGB → HSV":
             processed_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-            st.image(processed_image, caption="HSV", use_container_width=True)
+            st.image(processed_image, caption="HSV", use_column_width=True)
         elif choice == "RGB → YCbCr":
             processed_image = cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
-            st.image(processed_image, caption="YCbCr", use_container_width=True)
+            st.image(processed_image, caption="YCbCr", use_column_width=True)
         elif choice == "BGR ↔ RGB":
             processed_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            st.image(processed_image, caption="BGR ↔ RGB", use_container_width=True)
+            st.image(processed_image, caption="BGR ↔ RGB", use_column_width=True)
 
     # ---- Transformations ----
     with tab3:
@@ -97,18 +97,18 @@ if uploaded_file:
             h, w = image.shape[:2]
             M = cv2.getRotationMatrix2D((w//2, h//2), angle, 1)
             processed_image = cv2.warpAffine(image, M, (w, h))
-            st.image(processed_image, caption=f"Rotated {angle}°", use_container_width=True)
+            st.image(processed_image, caption=f"Rotated {angle}°", use_column_width=True)
         elif choice == "Scale":
             scale = st.slider("Scaling Factor", 0.1, 2.0, 1.0)
             processed_image = cv2.resize(image, None, fx=scale, fy=scale)
-            st.image(processed_image, caption=f"Scaled ×{scale}", use_container_width=True)
+            st.image(processed_image, caption=f"Scaled ×{scale}", use_column_width=True)
         elif choice == "Translate":
             tx = st.slider("Shift X", -100, 100, 20)
             ty = st.slider("Shift Y", -100, 100, 20)
             M = np.float32([[1, 0, tx], [0, 1, ty]])
             h, w = image.shape[:2]
             processed_image = cv2.warpAffine(image, M, (w, h))
-            st.image(processed_image, caption=f"Translated ({tx},{ty})", use_container_width=True)
+            st.image(processed_image, caption=f"Translated ({tx},{ty})", use_column_width=True)
 
     # ---- Filtering ----
     with tab4:
@@ -116,23 +116,23 @@ if uploaded_file:
         if choice == "Gaussian":
             k = st.slider("Kernel Size", 1, 15, 5, step=2)
             processed_image = cv2.GaussianBlur(image, (k, k), 0)
-            st.image(processed_image, caption="Gaussian Blur", use_container_width=True)
+            st.image(processed_image, caption="Gaussian Blur", use_column_width=True)
         elif choice == "Median":
             k = st.slider("Kernel Size", 1, 15, 3, step=2)
             processed_image = cv2.medianBlur(image, k)
-            st.image(processed_image, caption="Median Blur", use_container_width=True)
+            st.image(processed_image, caption="Median Blur", use_column_width=True)
         elif choice == "Mean":
             k = st.slider("Kernel Size", 1, 15, 3, step=2)
             processed_image = cv2.blur(image, (k, k))
-            st.image(processed_image, caption="Mean Blur", use_container_width=True)
+            st.image(processed_image, caption="Mean Blur", use_column_width=True)
         elif choice == "Sobel":
             processed_image = cv2.Sobel(image, cv2.CV_64F, 1, 1, ksize=5)
             processed_image = cv2.convertScaleAbs(processed_image)
-            st.image(processed_image, caption="Sobel Filter", use_container_width=True)
+            st.image(processed_image, caption="Sobel Filter", use_column_width=True)
         elif choice == "Laplacian":
             processed_image = cv2.Laplacian(image, cv2.CV_64F)
             processed_image = cv2.convertScaleAbs(processed_image)
-            st.image(processed_image, caption="Laplacian Filter", use_container_width=True)
+            st.image(processed_image, caption="Laplacian Filter", use_column_width=True)
 
     # ---- Enhancement ----
     with tab5:
@@ -140,11 +140,11 @@ if uploaded_file:
         if choice == "Histogram Equalization":
             gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
             processed_image = cv2.equalizeHist(gray)
-            st.image(processed_image, caption="Histogram Equalized", channels="GRAY", use_container_width=True)
+            st.image(processed_image, caption="Histogram Equalized", channels="GRAY", use_column_width=True)
         elif choice == "Sharpening":
             kernel = np.array([[0,-1,0], [-1,5,-1], [0,-1,0]])
             processed_image = cv2.filter2D(image, -1, kernel)
-            st.image(processed_image, caption="Sharpened Image", use_container_width=True)
+            st.image(processed_image, caption="Sharpened Image", use_column_width=True)
 
     # ---- Edge Detection ----
     with tab6:
@@ -153,15 +153,15 @@ if uploaded_file:
             t1 = st.slider("Threshold1", 50, 300, 100)
             t2 = st.slider("Threshold2", 50, 300, 200)
             processed_image = cv2.Canny(image, t1, t2)
-            st.image(processed_image, caption="Canny Edges", channels="GRAY", use_container_width=True)
+            st.image(processed_image, caption="Canny Edges", channels="GRAY", use_column_width=True)
         elif choice == "Sobel":
             processed_image = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=5)
             processed_image = cv2.convertScaleAbs(processed_image)
-            st.image(processed_image, caption="Sobel Edge", use_container_width=True)
+            st.image(processed_image, caption="Sobel Edge", use_column_width=True)
         elif choice == "Laplacian":
             processed_image = cv2.Laplacian(image, cv2.CV_64F)
             processed_image = cv2.convertScaleAbs(processed_image)
-            st.image(processed_image, caption="Laplacian Edge", use_container_width=True)
+            st.image(processed_image, caption="Laplacian Edge", use_column_width=True)
 
     # ---- Compression ----
     with tab7:
