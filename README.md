@@ -44,5 +44,5 @@ An interactive web app built using **Streamlit**, **OpenCV**, and **NumPy** that
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/visionlab-toolkit.git
-cd visionlab-toolkit
+git clone https://github.com/akshith004/Image-Processing-Toolkit-web-app.git
+cd Image-Processing-Toolkit-web-app
